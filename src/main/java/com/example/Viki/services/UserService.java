@@ -62,4 +62,14 @@ public class UserService {
     public List<User> list() {
         return userRepository.findAll();
     }
+
+    public void setNumberLink(User user){
+        user.setNumberLink(user.getNumberLink() + 1);
+        userRepository.save(user);
+    }
+
+    public void nullNumberLink(User user){
+        user.setNumberLink(new Long(1));
+        userRepository.save(user);
+    }
 }

@@ -12,7 +12,6 @@
                 <span class="fs-4 px-2">Википедия Владимира Бебишева</span>
             </a>
             <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto gy-2">
-
                 <a class="me-3 py-2 text-dark text-decoration-none" href="/">Главная</a>
                 <a class="me-3 py-2 text-dark text-decoration-none" href="/article">Статьи</a>
                 <#if user.email??>
@@ -20,10 +19,6 @@
                 <#else>
                 <a class="me-3 py-2 text-dark text-decoration-none" href="/login">Войти</a>
                 </#if>
-                <form class="d-flex me-5">
-                    <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Поиск</button>
-                </form>
             </nav>
         </div>
         <div class="container mt-4">

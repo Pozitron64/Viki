@@ -23,8 +23,19 @@
     </div>
 <div class="container mt-5">
     <h1>${article.name}</h1><hr>
-    <h4>${article.text}</h4>
-    <b>Количество просмотров: </b>${article.numberViews}
+    <#if article.linkFoto??>
+      <img src="${article.linkFoto}" height="100px"/><br><br>
+    </#if>
+    <#assign myRange = 0 ..< sizeLinks >
+        <#list myRange as range>
+            ${textNoLinks[range]}
+            <a href="${links[range].textLink}" data-bs-toggle="tooltip" data-bs-placement="top" title="Подробнее">${links[range].identificationWord}</a>
+        </#list>
+    ${textNoLinks[sizeLinks]}
 </div>
+    <form action="/article-info/edit/${article.id}" method="get">
+        <input type="hidden" name="_csrf" value="${_csrf.token}">
+        <input type="submit" value="Редактировать статью"/>
+    </form>
 </body>
 </html>

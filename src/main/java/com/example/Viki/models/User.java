@@ -47,6 +47,8 @@ public class User implements UserDetails {
 
     private LocalDateTime dateOfCreated;
 
+    private Long numberLink = new Long(1);
+
     public boolean isAdmin(){return roles.contains(Role.ROLE_ADMIN);}
 
     @PrePersist
