@@ -48,7 +48,7 @@ public class ArticleService {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT * FROM article WHERE name LIKE ?"
             );
-            preparedStatement.setString(1, frazeSearch);
+            preparedStatement.setString(1,  "%" + frazeSearch + "%");
             ResultSet resultSet = preparedStatement.executeQuery();
             while(resultSet.next()){
                 listId.add(resultSet.getLong("id"));

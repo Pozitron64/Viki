@@ -1,5 +1,4 @@
-<#macro template user>
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="en" xmlns:th="http://www.thymleaf.org">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -24,9 +23,5 @@
                 </#if>
             </nav>
         </div>
-        <div class="container mt-4">
-            <#nested/>
-        </div>
     </body>
     </html>
-</#macro>
