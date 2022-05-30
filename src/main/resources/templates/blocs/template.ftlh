@@ -12,12 +12,16 @@
                 <span class="fs-4 px-2">Википедия Владимира Бебишева</span>
             </a>
             <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto gy-2">
+
                 <a class="me-3 py-2 text-dark text-decoration-none" href="/">Главная</a>
                 <a class="me-3 py-2 text-dark text-decoration-none" href="/article">Статьи</a>
                 <#if user??>
                     <#if user.email??>
                         <a class="me-3 py-2 text-dark text-decoration-none" href="/article-add">Добавить статью</a>
-                        <a class="me-3 py-2 text-dark text-decoration-none" href="/logout">Выйти</a>
+                        <form action="/logout" method="post">
+                            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                            <input type="submit" value="Выйти"/>
+                        </form>
                     <#else>
                         <a class="me-3 py-2 text-dark text-decoration-none" href="/login">Войти</a>
                     </#if>

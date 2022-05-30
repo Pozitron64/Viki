@@ -4,5 +4,4 @@
     <#if user.isAdmin()>
             <a href="/admin">Панель администратора</a>
     </#if>
-
 </@t.template>

@@ -1,32 +1,39 @@
 package com.example.Viki.controllers;
 
 import com.example.Viki.models.User;
+import com.example.Viki.services.ArticleService;
 import com.example.Viki.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final ArticleService articleService;
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model, Principal principal) {
+        model.addAttribute("user", articleService.getUserByPrincipal(principal));
         return "login";
     }
 
     @GetMapping("/registration")
-    public String registration() {
+    public String registration(Model model, Principal principal) {
+        model.addAttribute("user", articleService.getUserByPrincipal(principal));
         return "registration";
     }
 
-    @GetMapping("/logout")
-    public String logout() {
-        return "logout";
-    }
+//    @GetMapping("/logout")
+//    public String logout() {
+//        return "logout";
+//    }
 
     @PostMapping("/registration")
     public String createUser(User user, Model model) {

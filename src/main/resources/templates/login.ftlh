@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
-
+<#import "blocs/template.ftlh" as t>
+<@t.template user>
 <h1>Википедия</h1><hr>
 <h4>Авторизация</h4>
 <form action="/login" method="post">
@@ -15,5 +9,4 @@
     <input type="submit" value="Вход"/>
 </form>
 <a href="/registration">Зарегистрироваться</a>
-</body>
-</html>
+</@t.template>

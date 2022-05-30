@@ -13,5 +13,4 @@
     <#else>
       <h3>Статей нет</h3>
     </#list>
-
 </@t.template>
