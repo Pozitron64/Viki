@@ -3,6 +3,7 @@ package com.example.Viki.controllers;
 import com.example.Viki.models.Article;
 import com.example.Viki.models.Link;
 import com.example.Viki.models.Ranking;
+import com.example.Viki.models.enums.TypeArticle;
 import com.example.Viki.models.primarykey.RankingId;
 import com.example.Viki.repositories.ArticleRepository;
 import com.example.Viki.repositories.RankingRepository;
@@ -67,14 +68,51 @@ public class ArticleController {
     }
 
     @PostMapping("/article-add")
-    public String articlesPostAdd(Article article, Principal principal) throws IOException {
+    public String articlesPostAdd(Article article, Principal principal, String typeArticle, Model model) throws IOException {
+        switch (typeArticle) {
+            case ("математика"):
+                if (articleService.getUserByPrincipal(principal).getTypeArticles().contains(TypeArticle.TYPE_MATH)){
+                    article.getTypeArticles().add(TypeArticle.TYPE_MATH);
+                }
+                else{
+                    model.addAttribute("typeArticle",typeArticle);
+                    model.addAttribute("messageWarning", "У вас нет прав для добавления статьи с данной тематикой, обратитесь к администратору");
+                    return articlesAdd(model, principal);
+                }
+                break;
+            case ("игры"):
+                if (articleService.getUserByPrincipal(principal).getTypeArticles().contains(TypeArticle.TYPE_GAMES)){
+                    article.getTypeArticles().add(TypeArticle.TYPE_GAMES);
+                }
+                else{
+                    model.addAttribute("typeArticle",typeArticle);
+                    model.addAttribute("messageWarning", "У вас нет прав для добавления статьи с данной тематикой, обратитесь к администратору");
+                    return articlesAdd(model, principal);
+                }
+                break;
+            case (""):
+                if (articleService.getUserByPrincipal(principal).getTypeArticles().contains(TypeArticle.TYPE_DEFAULT)){
+                    article.getTypeArticles().add(TypeArticle.TYPE_DEFAULT);
+                }
+                else{
+                    model.addAttribute("typeArticle",typeArticle);
+                    model.addAttribute("messageWarning", "У вас нет прав для добавления статьи с данной тематикой, обратитесь к администратору");
+                    return articlesAdd(model, principal);
+                }
+                break;
+            default:
+                model.addAttribute("typeArticle",typeArticle);
+                model.addAttribute("messageWarning", "Данной тематики не существует");
+                return articlesAdd(model, principal);
+        }
         article.setSize(new Long(article.getText().length()));
         article.setNumberLikes(new Long(0));
         article.setNumberViews(new Long(0));
-        if (article.getText().length() < 20){
-            article.setTiny_text(article.getText().substring(0,article.getText().length()-1));
+        if (article.getText().length() < 20) {
+            article.setTiny_text(article.getText().substring(0, article.getText().length() - 1));
+        }else{
+            article.setTiny_text(article.getText().substring(0, 19));
         }
-        article.setTiny_text(article.getText().substring(0,19));
         article.setLinks(articleService.parse(article.getTextLinks()));
         articleService.saveArticle(principal, article);
         return "redirect:/article";
@@ -86,72 +124,92 @@ public class ArticleController {
         article.setSize(new Long(article.getText().length()));
         article.setNumberLikes(new Long(0));
         article.setNumberViews(new Long(0));
-        if (article.getText().length() < 20){
-            article.setTiny_text(article.getText().substring(0,article.getText().length()-1));
+        if (article.getText().length() < 20) {
+            article.setTiny_text(article.getText().substring(0, article.getText().length() - 1));
         }
-        article.setTiny_text(article.getText().substring(0,19));
+        article.setTiny_text(article.getText().substring(0, 19));
         article.setLinks(articleService.parse(article.getTextLinks()));
         articleService.saveArticle(principal, article);
         return "redirect:/article";
     }
+
     @GetMapping("/article/{id}")
     public String getArticle(@PathVariable(value = "id") Long id, Model model, Principal principal) {
         List<String> textNoLinks = new ArrayList<>();
-        Map<Integer, Link> map = new TreeMap<>(Comparator.comparingInt(o->o));
+        Map<Integer, Link> map = new TreeMap<>(Comparator.comparingInt(o -> o));
         Double middleOption = new Double(0);
         Double numberArticle = new Double(0);
         Double numberUser = new Double(0);
-        for(Ranking ranking : rankingRepository.findAll()){
-            if (ranking.getRankingId().getArticleId() == id){
+        boolean isExpert = false;
+        for (Ranking ranking : rankingRepository.findAll()) {
+            if (ranking.getRankingId().getArticleId() == id) {
                 middleOption += ranking.getRating();
                 numberArticle++;
             }
-            if (ranking.getRankingId().getUserId() == articleService.getUserByPrincipal(principal).getId()){
+            if (ranking.getRankingId().getUserId() == articleService.getUserByPrincipal(principal).getId()) {
                 numberUser++;
             }
         }
-        for (Link link : articleService.getArticleById(id).getLinks()){
-            map.put(articleService.getArticleById(id).getText().indexOf(link.getIdentificationWord()),link);
+        for (Link link : articleService.getArticleById(id).getLinks()) {
+            map.put(articleService.getArticleById(id).getText().indexOf(link.getIdentificationWord()), link);
         }
         Integer begin = 0;
-        for(Link link : map.values()){
+        for (Link link : map.values()) {
             textNoLinks.add(articleService.getArticleById(id).getText().substring(begin,
                     articleService.getArticleById(id).getText().indexOf(link.getIdentificationWord()) - 1));
             begin = articleService.getArticleById(id).getText().indexOf(link.getIdentificationWord()) + link.getIdentificationWord().length();
         }
         textNoLinks.add(articleService.getArticleById(id).getText().substring(begin,
-                        articleService.getArticleById(id).getText().length()));
+                articleService.getArticleById(id).getText().length()));
+        for(TypeArticle typeArticle : articleService.getArticleById(id).getTypeArticles()){
+            for(TypeArticle typeArticle1 : articleService.getUserByPrincipal(principal).getTypeArticles()){
+                if(typeArticle1 == typeArticle){
+                    isExpert = true;
+                    break;
+                }
+            }
+        }
         model.addAttribute("article", articleService.getArticleById(id));
         model.addAttribute("textNoLinks", textNoLinks);
         model.addAttribute("links", map.values());
-        model.addAttribute("sizeTextNoLinks",textNoLinks.size());
-        model.addAttribute("sizeLinks",articleService.getArticleById(id).getLinks().size());
+        model.addAttribute("sizeTextNoLinks", textNoLinks.size());
+        model.addAttribute("sizeLinks", articleService.getArticleById(id).getLinks().size());
         model.addAttribute("user", articleService.getUserByPrincipal(principal));
-        if (numberArticle != 0){
-            model.addAttribute("middleOption",middleOption / numberArticle);
-            if (numberUser != 0){
-                model.addAttribute("optionUser",rankingRepository.findById(new RankingId(articleService.getUserByPrincipal(principal).getId(),id)).get().getRating());
+        model.addAttribute("isExpert",isExpert);
+
+        if (numberArticle != 0) {
+            model.addAttribute("middleOption", middleOption / numberArticle);
+            if (numberUser != 0) {
+                model.addAttribute("optionUser", rankingRepository.findById(new RankingId(articleService.getUserByPrincipal(principal).getId(), id)).get().getRating());
             }
         }
-
-
-
         return "article-info";
     }
 
     @GetMapping("/rate/{id}")
     public String rateArticle(@PathVariable(value = "id") Long id, Principal principal, Model model, String option) throws IOException {
         Integer opt = 10;
-        switch (option){
-            case "1": opt = 1;break;
-            case "2": opt = 2;break;
-            case "3": opt = 3;break;
-            case "4": opt = 4;break;
-            case "5": opt = 5;break;
-            default:break;
+        switch (option) {
+            case "1":
+                opt = 1;
+                break;
+            case "2":
+                opt = 2;
+                break;
+            case "3":
+                opt = 3;
+                break;
+            case "4":
+                opt = 4;
+                break;
+            case "5":
+                opt = 5;
+                break;
+            default:
+                break;
         }
-        if(opt != 10){
-            rankingRepository.save(new Ranking(new RankingId(articleService.getUserByPrincipal(principal).getId(),id),opt));
+        if (opt != 10) {
+            rankingRepository.save(new Ranking(new RankingId(articleService.getUserByPrincipal(principal).getId(), id), opt));
         }
         return getArticle(id, model, principal);
     }

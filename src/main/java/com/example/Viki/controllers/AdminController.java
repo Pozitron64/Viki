@@ -2,6 +2,8 @@ package com.example.Viki.controllers;
 
 import com.example.Viki.models.User;
 import com.example.Viki.models.enums.Role;
+import com.example.Viki.models.enums.TypeArticle;
+import com.example.Viki.repositories.UserRepository;
 import com.example.Viki.services.ArticleService;
 import com.example.Viki.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.Map;
 public class AdminController {
     private final UserService userService;
     private final ArticleService articleService;
+    private final UserRepository userRepository;
 
     @GetMapping("/admin")
     public String admin(Model model, Principal principal) {
@@ -42,11 +45,12 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/user/edit/{user}")
-    public String usersEdit(@PathVariable("user") User user, Model model, Principal principal) {
-        model.addAttribute("user", user);
+    @GetMapping("/admin/user/edit/{id}")
+    public String usersEdit(@PathVariable("id") Long id, Model model, Principal principal) {
+        model.addAttribute("userEdit", userRepository.findById(id).get());
         model.addAttribute("user", articleService.getUserByPrincipal(principal));
         model.addAttribute("roles", Role.values());
+        model.addAttribute("typeArticles", TypeArticle.values());
         return "user-edit";
     }
 }

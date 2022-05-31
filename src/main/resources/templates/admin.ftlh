@@ -7,6 +7,7 @@
             <th>Номер телефона</th>
             <th>Активность</th>
             <th>Роли</th>
+            <th>Тип знаний</th>
             <th>Бан</th>
             <th>Редактирование</th>
             <th>Подробная информация</th>
@@ -17,6 +18,7 @@
                 <th>${user.numberPhone}</th>
                 <th><#if user.active>true<#else>false</#if></th>
                 <th><#list user.roles as role>${role} </#list></th>
+                <th><#list user.typeArticles as role>${role} </#list></th>
                 <th>
                     <form action="/admin/user/ban/${user.id}" method="post">
                         <input type="hidden" name="_csrf" value="${_csrf.token}">

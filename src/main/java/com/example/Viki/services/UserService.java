@@ -2,6 +2,7 @@ package com.example.Viki.services;
 
 import com.example.Viki.models.User;
 import com.example.Viki.models.enums.Role;
+import com.example.Viki.models.enums.TypeArticle;
 import com.example.Viki.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class UserService {
         if ((userRepository.findByEmail(userEmail) != null)||(userEmail == "")) return false;
         user.setActive(true);
         user.getRoles().add(Role.ROLE_USER);
+        user.getTypeArticles().add(TypeArticle.TYPE_DEFAULT);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         log.info("Saving new User with email: {}", userEmail);
         userRepository.save(user);
@@ -50,12 +52,20 @@ public class UserService {
         Set<String> roles = Arrays.stream(Role.values())
                 .map(Role::name)
                 .collect(Collectors.toSet());
+        Set<String> typeArticles = Arrays.stream(TypeArticle.values())
+                .map(TypeArticle::name)
+                .collect(Collectors.toSet());
+        user.getTypeArticles().clear();
         user.getRoles().clear();
         for (String key : form.keySet()) {
             if (roles.contains(key)) {
                 user.getRoles().add(Role.valueOf(key));
             }
+            if (typeArticles.contains(key)) {
+                user.getTypeArticles().add(TypeArticle.valueOf(key));
+            }
         }
+
         userRepository.save(user);
     }
 

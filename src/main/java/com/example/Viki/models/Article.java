@@ -1,11 +1,14 @@
 package com.example.Viki.models;
 
 
+import com.example.Viki.models.enums.TypeArticle;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -43,21 +46,18 @@ public class Article {
     @JoinColumn
     private User user;
 
+    @ElementCollection(targetClass = TypeArticle.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "article_type",
+            joinColumns = @JoinColumn(name = "article_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<TypeArticle> typeArticles = new HashSet<>();
+
     @OneToMany (cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinColumn
     private List<Link> links = new ArrayList<>();
 
     private String linkFoto;
 
-//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private List<Image> images = new ArrayList<>();
-
     private Long previewImageId;
-
-
-//    public void addImageToArticle(Image image) {
-//        image.setArticle(this);
-//        images.add(image);
-//    }
 
 }

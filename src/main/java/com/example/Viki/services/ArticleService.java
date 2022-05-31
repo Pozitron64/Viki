@@ -16,6 +16,8 @@ import java.security.Principal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -88,8 +90,13 @@ public class ArticleService {
         if(textLinks.length() == 0){
             return null;
         }
-
+        textLinks.replaceAll("\\r", "");
         for(String line : textLinks.split("\n")){
+            Pattern p = Pattern.compile(".+--.+");
+            Matcher m = p.matcher(line);
+            if (!m.matches()){
+                continue;
+            }
             String[] lineDou = line.split("--");
             Boolean islinkRepository = false;
             if(linkRepository.findByIdentificationWord(lineDou[0].trim()) == null){

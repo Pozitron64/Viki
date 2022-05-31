@@ -1,6 +1,7 @@
 package com.example.Viki.models;
 
 import com.example.Viki.models.enums.Role;
+import com.example.Viki.models.enums.TypeArticle;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,6 +43,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
+    @ElementCollection(targetClass = TypeArticle.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_type",
+            joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<TypeArticle> typeArticles = new HashSet<>();
+
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user")
     private List<Article> articles = new ArrayList<>();
 
@@ -50,6 +57,8 @@ public class User implements UserDetails {
     private Long numberLink = new Long(1);
 
     public boolean isAdmin(){return roles.contains(Role.ROLE_ADMIN);}
+    public boolean isWriter(){return roles.contains(Role.ROLE_WRITER);}
+    public boolean isUser(){return roles.contains(Role.ROLE_USER);}
 
     @PrePersist
     private void init() {

@@ -20,10 +20,12 @@
             <p class="text-start">Ваша оценка статьи - ${optionUser}</p>
         </#if>
         <div class="row g-3">
-            <form action="/article-info/edit/${article.id} class="col-md-6"" method="get">
-                <input type="hidden" name="_csrf" value="${_csrf.token}">
-                <input type="submit" value="Редактировать статью" class="btn btn-primary"/>
-            </form>
+            <#if isExpert>
+                <form action="/article-info/edit/${article.id} class="col-md-6"" method="get">
+                    <input type="hidden" name="_csrf" value="${_csrf.token}">
+                    <input type="submit" value="Редактировать статью" class="btn btn-primary"/>
+                </form>
+            </#if>
             <div class="col-md-4">
                 <form action="/rate/${article.id}" method="get">
                     Оцените статью: <input type="text" name="option"/>
