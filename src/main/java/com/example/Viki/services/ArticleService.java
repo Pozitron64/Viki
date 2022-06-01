@@ -94,7 +94,7 @@ public class ArticleService {
         for(String line : textLinks.split("\n")){
             Pattern p = Pattern.compile(".+--.+");
             Matcher m = p.matcher(line);
-            if (!m.matches()){
+            if (!m.lookingAt()){
                 continue;
             }
             String[] lineDou = line.split("--");
